@@ -1,5 +1,7 @@
 # TypeScript Basics
 
+--At the essence 
+
 ## Table of Contents
 1. [Advantages of TypeScript](#1-advantages-of-typescript)
 2. [TypeScript Additions](#2-typescript-additions)
