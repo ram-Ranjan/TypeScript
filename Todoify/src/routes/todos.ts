@@ -3,10 +3,13 @@
 import { Router } from 'express';
 //Only import what we need
 
-import {Todo} from '../models/todo';
-import { todo } from 'node:test';
+import {Todo} from '../models/todoModel';
+// import { todo } from 'node:test';
 
 const todos:Todo[] = [];
+
+type RequestBody = {text:string};//userdefined type
+type RequestParam = {id:string}
 
 // const router = express.Router()
 const router = Router();
@@ -17,9 +20,10 @@ router.get('/todo',(req,res,next) => {
 })
 
 router.post('/todo',(req,res,next) => {
+    const body = req.body as RequestBody;
     const newTodo :Todo ={
         id:new Date().toISOString(),
-        text: req.body.text
+        text: body.text
     };
     todos.push(newTodo);
     res.status(201).json(newTodo);
@@ -27,7 +31,8 @@ router.post('/todo',(req,res,next) => {
 
 
 router.get('/todo/:id',(req,res,next) => {
-    const todo = todos.find(todo => todo.id === req.params.id);
+    const params = req.params as RequestParam;
+    const todo = todos.find(todo => todo.id === params.id);
     if(todo)
         {
             res.status(200).json({message:"Todo not found",todo:todo})
@@ -38,10 +43,13 @@ router.get('/todo/:id',(req,res,next) => {
 })
 
 router.put('/todo/:id',(req,res,next) => {
-    const todoIndex = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params as RequestParam;
+    const body = req.body as RequestBody;
+
+    const todoIndex = todos.findIndex(todo => todo.id === params.id);
     if(todoIndex>=0){
         todos[todoIndex] = {...todos[todoIndex], 
-            text:req.body.text}
+            text:body.text}
             res.status(200).json({message:"Todo Updated",todo:todos[todoIndex]});
     }
     else{
@@ -50,7 +58,8 @@ router.put('/todo/:id',(req,res,next) => {
 });
 
 router.delete('/:id',(req,res,next) => {
-    const todoIndex = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params as RequestParam
+    const todoIndex = todos.findIndex(todo => todo.id === params.id);
     if(todoIndex >=0){
         todos.splice(todoIndex,1);
         res.status(200).json({message:"Todo deleted"});

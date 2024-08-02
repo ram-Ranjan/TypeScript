@@ -2,6 +2,7 @@
 // import express  from 'express';
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+// import { todo } from 'node:test';
 const todos = [];
 // const router = express.Router()
 const router = (0, express_1.Router)();
@@ -9,15 +10,17 @@ router.get('/todo', (req, res, next) => {
     res.status(200).json({ todos: todos });
 });
 router.post('/todo', (req, res, next) => {
+    const body = req.body;
     const newTodo = {
         id: new Date().toISOString(),
-        text: req.body.text
+        text: body.text
     };
     todos.push(newTodo);
     res.status(201).json(newTodo);
 });
 router.get('/todo/:id', (req, res, next) => {
-    const todo = todos.find(todo => todo.id === req.params.id);
+    const params = req.params;
+    const todo = todos.find(todo => todo.id === params.id);
     if (todo) {
         res.status(200).json({ message: "Todo not found", todo: todo });
     }
@@ -25,9 +28,11 @@ router.get('/todo/:id', (req, res, next) => {
         res.status(404).json({ message: "Todo not found" });
 });
 router.put('/todo/:id', (req, res, next) => {
-    const todoIndex = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params;
+    const body = req.body;
+    const todoIndex = todos.findIndex(todo => todo.id === params.id);
     if (todoIndex >= 0) {
-        todos[todoIndex] = Object.assign(Object.assign({}, todos[todoIndex]), { text: req.body.text });
+        todos[todoIndex] = Object.assign(Object.assign({}, todos[todoIndex]), { text: body.text });
         res.status(200).json({ message: "Todo Updated", todo: todos[todoIndex] });
     }
     else {
@@ -35,7 +40,8 @@ router.put('/todo/:id', (req, res, next) => {
     }
 });
 router.delete('/:id', (req, res, next) => {
-    const todoIndex = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params;
+    const todoIndex = todos.findIndex(todo => todo.id === params.id);
     if (todoIndex >= 0) {
         todos.splice(todoIndex, 1);
         res.status(200).json({ message: "Todo deleted" });
